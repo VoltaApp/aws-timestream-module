@@ -34,9 +34,12 @@ class AbstractUtils(ABC):
         n: int = 1,
     ):
         '''Divide batch into sub batch
+
         :param iterable: the batch iterable you want to divide to smaller parts
         :param n: the len of items in each part
+
         Example::
+
             # The code below shows an example of how to instantiate this type.
             # The values are placeholders you should change.
             from utils.abstracts.utils import AbstractUtils
@@ -50,18 +53,21 @@ class AbstractUtils(ABC):
             yield iterable[ndx:min(ndx + n, len_iterable)]
 
     @staticmethod
-    def convert_datetime_to_timestream_time(
+    def convert_datetime_to_timeseries(
         any_datetime: datetime,
     ) -> str:
-        '''Convert datetime object to `Time` data type in AWS Timestream
+        '''Convert datetime to `Time` data type in AWS Timestream
+
         :param any_datetime: the datetime object to convert
+
         Example::
+
             # The code below shows an example of how to instantiate this type.
             # The values are placeholders you should change.
             from utils.abstracts.utils import AbstractUtils
 
             any_datetime: datetime
-            timeseries = AbstractUtils.convert_datetime_to_timestream_time(any_datetime)
+            timeseries = AbstractUtils.convert_datetime_to_timeseries(any_datetime)
         '''
         if isinstance(any_datetime, datetime):
             result = str(int(any_datetime.timestamp()*1000))
@@ -72,6 +78,19 @@ class AbstractUtils(ABC):
     def get_dimensions_from_dict(
         any_dict: dict,
     ) -> List[dict]:
+        '''Convert dict to Dimensions in AWS Timestream
+
+        :param any_dict: the dict object to convert
+
+        Example::
+
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.abstracts.utils import AbstractUtils
+
+            any_dict: dict
+            dimensions = AbstractUtils.get_dimensions_from_dict(any_dict)
+        '''
         dimensions = []
         keys = any_dict.keys()
         values = any_dict.values()
