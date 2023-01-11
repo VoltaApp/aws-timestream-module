@@ -70,7 +70,7 @@ class BillReaderUtils(AbstractUtils):
             timestream_record = based_record
             timestream_record.update({
                 "Time": self.convert_datetime_to_timestream_time(
-                    given_datetime=item.get('issue_date')
+                    any_datetime=item.get('issue_date')
                 ),
                 "MeasureValues": measure_values
             })

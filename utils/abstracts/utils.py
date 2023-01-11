@@ -25,6 +25,7 @@ class AbstractUtils(ABC):
         self,
         items: List[dict],
     ) -> List[dict]:
+        '''An Abstract method in order to convert `dict items` to `AWS Timestream items`'''
         pass
 
     @staticmethod
@@ -50,12 +51,22 @@ class AbstractUtils(ABC):
 
     @staticmethod
     def convert_datetime_to_timestream_time(
-        given_datetime: datetime,
+        any_datetime: datetime,
     ) -> str:
-        if isinstance(given_datetime, datetime):
-            result = str(int(given_datetime.timestamp()*1000))
+        '''Convert datetime object to `Time` data type in AWS Timestream
+        :param any_datetime: the datetime object to convert
+        Example::
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.abstracts.utils import AbstractUtils
+
+            any_datetime: datetime
+            timeseries = AbstractUtils.convert_datetime_to_timestream_time(any_datetime)
+        '''
+        if isinstance(any_datetime, datetime):
+            result = str(int(any_datetime.timestamp()*1000))
             return result
-        raise ValueError(f"given_datetime only accepts datetime: {given_datetime}")
+        raise ValueError(f"any_datetime only accepts datetime type: {any_datetime}")
 
     @staticmethod
     def get_dimensions_from_dict(
