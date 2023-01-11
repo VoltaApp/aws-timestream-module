@@ -32,7 +32,18 @@ class AbstractUtils(ABC):
         iterable: Iterable,
         n: int = 1,
     ):
-        # Divide batch into sub batch
+        '''Divide batch into sub batch
+        :param iterable: the batch iterable you want to divide to smaller parts
+        :param n: the len of items in each part
+        Example::
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.abstracts.utils import AbstractUtils
+
+            records: List
+            for sub_records in AbstractUtils.batch(records, 100):
+                # do something with sub_records
+        '''
         len_iterable = len(iterable)
         for ndx in range(0, len_iterable, n):
             yield iterable[ndx:min(ndx + n, len_iterable)]
