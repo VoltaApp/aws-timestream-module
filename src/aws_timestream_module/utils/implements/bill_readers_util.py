@@ -31,6 +31,7 @@ class BillReaderUtils(AbstractUtils):
         super().__init__(
             measure_name,
         )
+        self.time_field = "issue_time"
         self.dimension_fields = [
             "username",
             "nmi"
@@ -40,7 +41,6 @@ class BillReaderUtils(AbstractUtils):
         ]
         self.user_manual_input_measure_value_fields = [
             "manual_usage",
-            "issue_time"
         ]
         self.extracting_bill_measure_value_fields = [
             "bill_readers",
@@ -74,15 +74,60 @@ class BillReaderUtils(AbstractUtils):
 
             # The code below shows an example of how to instantiate this type.
             # The values are placeholders you should change.
+            import json
+            from datetime import datetime, date
             from utils.implements.bill_readers_util import BillReaderUtils
 
-            items: List[dict]
+            bill_readers = [
+                {
+                    "read_type": "E",
+                    "billed_usage": 123,
+                    "start_reading_usage": 0,
+                    "end_reading_usage": 123,
+                    "billed_cost": 500.5,
+                    "discount": 5,
+                }
+            ]
+            items = [
+                {
+                    "issue_time": datetime.now(),
+                    "username": "any_username",
+                    "nmi": "1234567890",
+                    "unit_of_measure": "kWh",
+                    ## manually
+                    ## "manual_usage": 1234567890,
+                    # from bill
+                    "bill_readers": json.dumps(bill_readers),
+                    "read_type": "E",
+                    "billed_usage": 123,
+                    "start_reading_usage": 0,
+                    "end_reading_usage": 123,
+                    "billed_cost": 500.5,
+                    "discount": 5,
+                    "charging_start_date": date(2022, 12, 1).isoformat(),
+                    "charging_end_date": date(2022, 1, 1).isoformat(),
+                    "next_reading_date": date(2022, 1, 1).isoformat(),
+                    "customer_name": "any customer name",
+                    "customer_address": "any address",
+                    "customer_email": "example@email.com",
+                    "customer_retailer": "any retailer",
+                    "customer_plan": "any plan",
+                    "bill_image": json.dumps({
+                        "s3_region": "region",
+                        "s3_bucket": "bucket",
+                        "s3_key": "key"
+                    }),
+                }
+            ]
             utils = BillReaderUtils(
                 measure_name="energy_measure",
+                is_from_bill=True,
             )
             timestream_items = utils.get_records_with_multi_type(
                 items
             )
+            # output:
+            timestream_items = [{'MeasureName': 'energy_measure', 'Dimensions': [{'Name': 'username', 'Value': 'any_username'}, {'Name': 'nmi', 'Value': '1234567890'}], 'MeasureValueType': 'MULTI', 'Time': '1673461870194', 'MeasureValues': [{'Name': 'unit_of_measure', 'Value': 'kWh', 'Type': 'VARCHAR'}, {'Name': 'bill_readers', 'Value': '[{"read_type": "E", "billed_usage": 123, "start_reading_usage": 0, "end_reading_usage": 123, "billed_cost": 500.5, "discount": 5}]', 'Type': 'VARCHAR'}, {'Name': 'read_type', 'Value': 'E', 'Type': 'VARCHAR'}, {'Name': 'billed_usage', 'Value': '123', 'Type': 'BIGINT'}, {'Name': 'start_reading_usage', 'Value': '0', 'Type': 'BIGINT'}, {'Name': 'end_reading_usage', 'Value': '123', 'Type': 'BIGINT'}, {'Name': 'billed_cost', 'Value': '500.5', 'Type': 'DOUBLE'}, {'Name': 'discount', 'Value': '5', 'Type': 'BIGINT'}, {'Name': 'charging_start_date', 'Value': '2022-12-01', 'Type': 'VARCHAR'}, {'Name': 'charging_end_date', 'Value': '2022-01-01', 'Type': 'VARCHAR'}, {'Name': 'next_reading_date', 'Value': '2022-01-01', 'Type': 'VARCHAR'}, {'Name': 'customer_name', 'Value': 'any customer name', 'Type': 'VARCHAR'}, {'Name': 'customer_address', 'Value': 'any address', 'Type': 'VARCHAR'}, {'Name': 'customer_email', 'Value': 'example@email.com', 'Type': 'VARCHAR'}, {'Name': 'customer_retailer', 'Value': 'any retailer', 'Type': 'VARCHAR'}, {'Name': 'customer_plan', 'Value': 'any plan', 'Type': 'VARCHAR'}, {'Name': 'bill_image', 'Value': '{"s3_region": "region", "s3_bucket": "bucket", "s3_key": "key"}', 'Type': 'VARCHAR'}]}]
         '''
         timestream_records = []
         for item in items:
@@ -105,7 +150,7 @@ class BillReaderUtils(AbstractUtils):
             timestream_record = based_record
             timestream_record.update({
                 "Time": self.convert_datetime_to_timeseries(
-                    any_datetime=item.get('issue_date')
+                    any_datetime=item.get(self.time_field)
                 ),
                 "MeasureValues": measure_values
             })
