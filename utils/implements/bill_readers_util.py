@@ -11,6 +11,21 @@ class BillReaderUtils(AbstractUtils):
         measure_name: str,
         is_from_bill: bool = False,
     ) -> None:
+        '''An implement of AbstractUtils class for Bill Readers
+
+        :param measure_name: MeasureName in AWS Timestream table
+        :param is_from_bill: True if init an object extract from a bill. Default: False - User enter manually
+
+        Example::
+
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.implements.bill_readers_util import BillReaderUtils
+
+            utils = BillReaderUtils(
+                measure_name="energy_measure",
+            )
+        '''
         super().__init__(
             measure_name,
         )
@@ -49,6 +64,24 @@ class BillReaderUtils(AbstractUtils):
         self,
         items: List[dict],
     ) -> List[dict]:
+        '''An implement get_records_with_multi_type from AbstractUtils class. Use this one to prepare data for inserting items to AWS Timestream
+
+        :param items: the list of dicts to convert to AWS Timestream items
+
+        Example::
+
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.implements.bill_readers_util import BillReaderUtils
+
+            items: List[dict]
+            utils = BillReaderUtils(
+                measure_name="energy_measure",
+            )
+            timestream_items = utils.get_records_with_multi_type(
+                items
+            )
+        '''
         timestream_records = []
         for item in items:
             based_record = self.get_based_record_with_multi_type(
