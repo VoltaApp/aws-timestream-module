@@ -16,6 +16,20 @@ class AbstractUtils(ABC):
         self,
         measure_name: str,
     ) -> None:
+        '''Abstract Utils class
+
+        :param measure_name: MeasureName in AWS Timestream table
+
+        Example::
+
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.abstracts.utils import AbstractUtils
+
+            utils = AbstractUtils(
+                measure_name="energy_measure",
+            )
+        '''
         self.measure_name = measure_name
         self.dimension_fields = []
         self.based_measure_value_fields = []
@@ -107,6 +121,21 @@ class AbstractUtils(ABC):
         self,
         value: Any
     ) -> str:
+        '''Return AWS Timestream data type from a python instance
+
+        :param value: a python instance
+
+        Example::
+
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.abstracts.utils import AbstractUtils
+            from typing import Any
+
+            utils: AbstractUtils
+            value: Any
+            timestream_type = utils.__cast_value(value)
+        '''
         if isinstance(value, str):
             return "VARCHAR"
         if isinstance(value, float):
@@ -124,6 +153,23 @@ class AbstractUtils(ABC):
         name: str,
         value: Any,
     ) -> dict:
+        '''Return a measure_value in AWS Timestream
+
+        :param name: the field name
+        :param value: value of the field
+
+        Example::
+
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.abstracts.utils import AbstractUtils
+
+            utils: AbstractUtils
+            measure_value = utils.get_measure_value(
+                name="any_field",
+                value=100
+            )
+        '''
         return {
             'Name': name,
             'Value': str(value),
@@ -132,12 +178,28 @@ class AbstractUtils(ABC):
 
     def get_based_record_with_multi_type(
         self,
-        item: dict
+        any_item: dict
     ) -> dict:
+        '''Return a AWS Timestream based record with multi type before insert into Timestream table
+
+        :param any_item: the item
+
+        Example::
+
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.abstracts.utils import AbstractUtils
+
+            utils: AbstractUtils
+            item: dict
+            measure_value = utils.get_based_record_with_multi_type(
+                any_item=item
+            )
+        '''
         based_record = {
             "MeasureName": self.measure_name,
             "Dimensions": self.get_dimensions_from_dict({
-                key: item.get(key)
+                key: any_item.get(key)
                     for key in self.dimension_fields
             }),
             "MeasureValueType": "MULTI"
@@ -146,19 +208,50 @@ class AbstractUtils(ABC):
 
     def get_measure_values(
         self,
-        item: dict,
+        any_item: dict,
         measure_value_fields: List[str] = []
     ) -> List[dict]:
-        fields = measure_value_fields or self.based_measure_value_fields
-        for key in fields:
-            self.get_measure_value(
-                key,
-                item.get(key),
+        '''Return the AWS Timestream measure values
+
+        :param any_item: will map value from this item to measure values
+        :param measure_value_fields: list of measure field names
+
+        Example::
+
+            # The code below shows an example of how to instantiate this type.
+            # The values are placeholders you should change.
+            from utils.abstracts.utils import AbstractUtils
+
+            utils: AbstractUtils
+            item: dict
+            measure_value_fields: List[str] = [
+                "bill_readers",
+                "read_type",
+                "billed_usage",
+                "start_reading_usage",
+                "end_reading_usage",
+                "billed_cost",
+                "discount",
+                "charging_start_date",
+                "charging_end_date",
+                "next_reading_date",
+                "customer_name",
+                "customer_address",
+                "customer_email",
+                "customer_retailer",
+                "customer_plan",
+                "bill_image",
+            ]
+            measure_values = utils.get_measure_values(
+                any_item=item
+                measure_value_fields=measure_value_fields
             )
+        '''
+        fields = measure_value_fields or self.based_measure_value_fields
         based_measure_values = [
             self.get_measure_value(
                 key,
-                item.get(key),
+                any_item.get(key),
             ) for key in fields
         ]
         return based_measure_values
