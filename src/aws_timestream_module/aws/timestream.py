@@ -1,6 +1,8 @@
 import boto3
-from core.config import config as _config
 from botocore.config import Config
+from aws_timestream_module.core.config import (
+    config as _config,
+)
 
 
 session = boto3.Session()

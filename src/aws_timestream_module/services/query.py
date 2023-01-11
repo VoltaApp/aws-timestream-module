@@ -2,14 +2,16 @@
 import sys
 import traceback
 import time
-from aws.timestream import query_client
+from aws_timestream_module.aws.timestream import (
+    query_client as _query_client,
+)
 
 
 class QueryService:
 
-    def __init__(self, client=query_client):
-        self.client = client
-        self.paginator = client.get_paginator('query')
+    def __init__(self, query_client=_query_client):
+        self._query_client = query_client
+        self.paginator = query_client.get_paginator('query')
 
     def run_query(self, query_string):
         try:
@@ -112,10 +114,10 @@ class QueryService:
 
     def cancel_query(self):
         print("Starting query: " + self.SELECT_ALL)
-        result = self.client.query(QueryString=self.SELECT_ALL)
+        result = self._query_client.query(QueryString=self.SELECT_ALL)
         print("Cancelling query: " + self.SELECT_ALL)
         try:
-            self.client.cancel_query(QueryId=result['QueryId'])
+            self._query_client.cancel_query(QueryId=result['QueryId'])
             print("Query has been successfully cancelled")
         except Exception as err:
             print("Cancelling query failed:", err)

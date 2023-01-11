@@ -1,7 +1,9 @@
 from typing import (
     List,
 )
-from utils.abstracts.utils import AbstractUtils
+from aws_timestream_module.utils.abstracts.utils import (
+    AbstractUtils,
+)
 
 
 class BillReaderUtils(AbstractUtils):
