@@ -34,10 +34,12 @@ class BillReaderUtils(AbstractUtils):
         self.time_field = "issue_time"
         self.dimension_fields = [
             "username",
-            "nmi"
+            "nmi",
+            "gmt",
         ]
         self.based_measure_value_fields = [
             "unit_of_measure",
+            "is_from_bill",
         ]
         self.user_manual_input_measure_value_fields = [
             "manual_usage",
@@ -50,6 +52,9 @@ class BillReaderUtils(AbstractUtils):
             "end_reading_usage",
             "billed_cost",
             "discount",
+            "due_date",
+            "billing_days",
+            "tax_invoice",
             "charging_start_date",
             "charging_end_date",
             "next_reading_date",
@@ -80,12 +85,16 @@ class BillReaderUtils(AbstractUtils):
 
             bill_readers = [
                 {
-                    "read_type": "E",
-                    "billed_usage": 123,
-                    "start_reading_usage": 0,
-                    "end_reading_usage": 123,
-                    "billed_cost": 500.5,
-                    "discount": 5,
+                    "billed_usage": 709.97,
+                    "billed_cost": 215.07,
+                    "unit_of_measure": "kWh",
+                    "due_date": "2022-09-12T00:00:00",
+                    "billing_days": 31,
+                    "charging_start_date": "2022-07-29T00:00:00",
+                    "charging_end_date": "2022-08-28T00:00:00",
+                    "start_reading_usage": 17135.23,
+                    "end_reading_usage": 17845.2,
+                    "read_type": "A"
                 }
             ]
             items = [
@@ -98,20 +107,24 @@ class BillReaderUtils(AbstractUtils):
                     ## "manual_usage": 1234567890,
                     # from bill
                     "bill_readers": json.dumps(bill_readers),
-                    "read_type": "E",
-                    "billed_usage": 123,
-                    "start_reading_usage": 0,
-                    "end_reading_usage": 123,
-                    "billed_cost": 500.5,
-                    "discount": 5,
-                    "charging_start_date": date(2022, 12, 1).isoformat(),
-                    "charging_end_date": date(2022, 1, 1).isoformat(),
-                    "next_reading_date": date(2022, 1, 1).isoformat(),
+                    "read_type": "A",
+                    "billed_usage": 709.97,
+                    "start_reading_usage": 17135.23,
+                    "end_reading_usage": 17845.2,
+                    "billed_cost": 215.07,
+                    "discount": 5,  # optional
+                    "gmt": "+11",
+                    "charging_start_date": "2022-07-29T00:00:00",
+                    "charging_end_date": "2022-08-28T00:00:00",
+                    "next_reading_date": "2022-08-29T00:00:00",  # optional
+                    "due_date": "2022-09-12T00:00:00",
+                    "billing_days": 31,
+                    "tax_invoice": "any tax invoice",
                     "customer_name": "any customer name",
                     "customer_address": "any address",
-                    "customer_email": "example@email.com",
+                    "customer_email": "example@email.com",  # optional
                     "customer_retailer": "any retailer",
-                    "customer_plan": "any plan",
+                    "customer_plan": "any plan",  # optional
                     "bill_image": json.dumps({
                         "s3_region": "region",
                         "s3_bucket": "bucket",
@@ -135,6 +148,7 @@ class BillReaderUtils(AbstractUtils):
                 item,
             )
             measure_value_fields = self.based_measure_value_fields
+            item.update({"is_from_bill": self.is_from_bill})
             if self.is_from_bill:
                 measure_value_fields.extend(
                     self.extracting_bill_measure_value_fields

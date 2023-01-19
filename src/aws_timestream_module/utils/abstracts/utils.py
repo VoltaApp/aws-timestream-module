@@ -140,12 +140,10 @@ class AbstractUtils(ABC):
             return "VARCHAR"
         if isinstance(value, float):
             return "DOUBLE"
-        if isinstance(value, int):
-            return "BIGINT"
         if isinstance(value, bool):
             return "BOOLEAN"
-        if isinstance(value, float):
-            return "DOUBLE"
+        if isinstance(value, int):
+            return "BIGINT"
         raise ValueError(f"Not supported type: {type(value)}")
 
     def get_measure_value(
@@ -251,7 +249,7 @@ class AbstractUtils(ABC):
         based_measure_values = [
             self.get_measure_value(
                 key,
-                any_item.get(key),
+                any_item.get(key, "None"),
             ) for key in fields
         ]
         return based_measure_values

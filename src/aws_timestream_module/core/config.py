@@ -10,8 +10,8 @@ class Settings(object):
 
 
 class DevSettings(Settings):
-    db_name = 'steve-test-db'
-    table_name = 'steve-test-tbl'
+    db_name = 'dev_volta_db'
+    table_name = 'energy_measure_tbl'
 
 
 class StagingSettings(Settings):
