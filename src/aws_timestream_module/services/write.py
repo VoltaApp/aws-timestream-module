@@ -1,12 +1,6 @@
-from aws_timestream_module.aws.timestream import (
-    write_client as _write_client,
-)
-from aws_timestream_module.core.config import (
-    config as _config,
-)
-from aws_timestream_module.utils.abstracts.utils import (
-    AbstractUtils,
-)
+from aws_timestream_module.aws.timestream import write_client as _write_client
+from aws_timestream_module.core.config import config as _config
+from aws_timestream_module.utils.abstracts.utils import AbstractUtils
 
 
 class WriteService():

@@ -1,14 +1,7 @@
-from abc import (
-    ABC,
-    abstractmethod,
-)
-from typing import (
-    Any,
-    Iterable,
-    List,
-    Union,
-)
+import json
+from abc import ABC, abstractmethod
 from datetime import datetime
+from typing import Any, Iterable, List, Union
 
 
 class AbstractUtils(ABC):
@@ -141,7 +134,7 @@ class AbstractUtils(ABC):
             value: Any
             timestream_type = utils.__cast_value(value)
         '''
-        if isinstance(value, str):
+        if isinstance(value, (str, list, dict)):
             return "VARCHAR"
         if isinstance(value, float):
             return "DOUBLE"
@@ -173,9 +166,12 @@ class AbstractUtils(ABC):
                 value=100
             )
         '''
+        casted_value = str(value)
+        if isinstance(value, (list, dict)):
+            casted_value = json.dumps(value)
         return {
             'Name': name,
-            'Value': str(value),
+            'Value': casted_value,
             'Type': self.__cast_value(value),
         }
 

@@ -1,10 +1,9 @@
 #!/usr/bin/python
 import sys
-import traceback
 import time
-from aws_timestream_module.aws.timestream import (
-    query_client as _query_client,
-)
+import traceback
+
+from aws_timestream_module.aws.timestream import query_client as _query_client
 
 
 class QueryService:

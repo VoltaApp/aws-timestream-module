@@ -1,9 +1,7 @@
 import boto3
 from botocore.config import Config
-from aws_timestream_module.core.config import (
-    config as _config,
-)
 
+from aws_timestream_module.core.config import config as _config
 
 session = boto3.Session()
 # Recommended Timestream write client SDK configuration:
