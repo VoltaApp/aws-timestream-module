@@ -6,6 +6,7 @@ from typing import (
     Any,
     Iterable,
     List,
+    Union,
 )
 from datetime import datetime
 
@@ -68,7 +69,7 @@ class AbstractUtils(ABC):
 
     @staticmethod
     def convert_datetime_to_timeseries(
-        any_datetime: datetime,
+        any_datetime: Union[datetime, str],
     ) -> str:
         '''Convert datetime to `Time` data type in AWS Timestream
 
@@ -83,10 +84,14 @@ class AbstractUtils(ABC):
             any_datetime: datetime
             timeseries = AbstractUtils.convert_datetime_to_timeseries(any_datetime)
         '''
-        if isinstance(any_datetime, datetime):
-            result = str(int(any_datetime.timestamp()*1000))
+        try:
+            datetime_input = any_datetime
+            if isinstance(datetime_input, str):
+                datetime_input = datetime.fromisoformat(datetime_input)
+            result = str(int(datetime_input.timestamp()*1000))
             return result
-        raise ValueError(f"any_datetime only accepts datetime type: {any_datetime}")
+        except ValueError:
+            raise ValueError(f"any_datetime only accepts datetime format: {any_datetime}")
 
     @staticmethod
     def get_dimensions_from_dict(
