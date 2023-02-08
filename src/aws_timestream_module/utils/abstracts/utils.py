@@ -118,7 +118,7 @@ class AbstractUtils(ABC):
     def __cast_value(
         self,
         value: Any
-    ) -> str:
+    ) -> Union[Any, str]:
         '''Return AWS Timestream data type from a python instance
 
         :param value: a python instance
@@ -132,16 +132,20 @@ class AbstractUtils(ABC):
 
             utils: AbstractUtils
             value: Any
-            timestream_type = utils.__cast_value(value)
+            casted_value, timestream_type = utils.__cast_value(value)
         '''
-        if isinstance(value, (str, list, dict)):
-            return "VARCHAR"
+        casted_value = str(value)
+        if isinstance(value, (list, dict)):
+            casted_value = json.dumps(value)
+            return casted_value, "VARCHAR"
+        if isinstance(value, str):
+            return casted_value, "VARCHAR"
         if isinstance(value, float):
-            return "DOUBLE"
+            return casted_value, "DOUBLE"
         if isinstance(value, bool):
-            return "BOOLEAN"
+            return casted_value, "BOOLEAN"
         if isinstance(value, int):
-            return "BIGINT"
+            return casted_value, "BIGINT"
         raise ValueError(f"Not supported type: {type(value)}")
 
     def get_measure_value(
@@ -166,13 +170,11 @@ class AbstractUtils(ABC):
                 value=100
             )
         '''
-        casted_value = str(value)
-        if isinstance(value, (list, dict)):
-            casted_value = json.dumps(value)
+        casted_value, timestream_type = self.__cast_value(value)
         return {
             'Name': name,
             'Value': casted_value,
-            'Type': self.__cast_value(value),
+            'Type': timestream_type,
         }
 
     def get_based_record_with_multi_type(
