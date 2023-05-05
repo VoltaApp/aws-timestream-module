@@ -1,21 +1,28 @@
-#!/usr/bin/python
 import sys
 import time
 import traceback
 
-from aws_timestream_module.aws.timestream import query_client as _query_client
+import boto3
 
 
 class QueryService:
 
-    def __init__(self, query_client=_query_client):
-        self._query_client = query_client
-        self.paginator = query_client.get_paginator('query')
+    boto3_session = boto3.Session()
+
+    def __init__(
+        self,
+        query_client=None
+    ):
+        self._query_client = query_client or self.boto3_session.client(
+            'timestream-query',
+            region_name="ap-southeast-2",
+        )
+        self._paginator = self._query_client.get_paginator('query')
 
     def run_query(self, query_string):
         try:
             results = []
-            page_iterator = self.paginator.paginate(QueryString=query_string)
+            page_iterator = self._paginator.paginate(QueryString=query_string)
             for page in page_iterator:
                 results.extend(self.__parse_query_result(page))
             return results
