@@ -1,6 +1,7 @@
 import sys
 import time
 import traceback
+from typing import List
 
 import boto3
 
@@ -19,7 +20,7 @@ class QueryService:
         )
         self._paginator = self._query_client.get_paginator('query')
 
-    def run_query(self, query_string):
+    def run_query(self, query_string) -> List[dict]:
         try:
             results = []
             page_iterator = self._paginator.paginate(QueryString=query_string)
