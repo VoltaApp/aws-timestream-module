@@ -44,7 +44,8 @@ timestream_items = write_service.get_records_with_multi_type(
 write_service.write_records(
     database_name="your_database_name",
     table_name="your_table_name",
-    records=timestream_items
+    records=timestream_items,
+    batch_size=100
 )
 
 ```

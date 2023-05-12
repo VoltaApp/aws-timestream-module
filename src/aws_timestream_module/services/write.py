@@ -91,10 +91,12 @@ class WriteService():
         self,
         database_name: str,
         table_name: str,
-        records: list
+        records: list,
+        batch_size: 100
     ) -> None:
         try:
-            for sub_records in TimestreamUtils.batch(records, 100):
+            for sub_records in TimestreamUtils.batch(records, batch_size):
+                print({"write_records": sub_records})
                 result = self._write_client.write_records(
                     DatabaseName=database_name,
                     TableName=table_name,
