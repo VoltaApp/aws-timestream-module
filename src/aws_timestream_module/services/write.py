@@ -93,9 +93,10 @@ class WriteService():
         table_name: str,
         records: list,
         batch_size: 100
-    ) -> None:
-        try:
-            for sub_records in TimestreamUtils.batch(records, batch_size):
+    ) -> list:
+        error_records = []
+        for sub_records in TimestreamUtils.batch(records, batch_size):
+            try:
                 print({"write_records": sub_records})
                 result = self._write_client.write_records(
                     DatabaseName=database_name,
@@ -105,6 +106,8 @@ class WriteService():
                 )
                 print("WriteRecords Status: ["
                 + f"{result['ResponseMetadata']['HTTPStatusCode']}]")
-        except Exception as err:
-            print(err.response)
-            print(err.response["Error"])
+            except Exception as err:
+                print(err.response)
+                print(err.response["Error"])
+                error_records.extend(error_records)
+        return error_records

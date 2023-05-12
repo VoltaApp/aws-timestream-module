@@ -186,16 +186,11 @@ class TimestreamUtils():
             any_dict: dict
             dimensions = TimestreamUtils.get_dimensions_from_dict(any_dict)
         '''
-        dimensions = []
-        keys = any_dict.keys()
-        values = any_dict.values()
-        for key, value in zip(keys, values):
-            dimensions.append(
-                {
-                    'Name': key,
-                    'Value': value
-                }
-            )
+        dimensions = [
+            {
+                'Name': key,
+                'Value': str(value) if not value else value
+            } for key, value in any_dict.items()]
         return dimensions
 
     def __cast_value(
