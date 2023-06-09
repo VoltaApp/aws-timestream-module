@@ -15,6 +15,9 @@ setup(
     packages=find_packages(where='src'),
     package_dir={"": "src"},
     zip_safe=False,
+    install_requires=[
+        'boto3',
+    ],
     python_requires='>=3.9',
     project_urls={
         'Documentation': 'https://github.com/VoltaApp/aws-timestream-module',
