@@ -1,7 +1,7 @@
 # Amazon Timestream Module
 
 ## Install this package
-```pip install git+ssh://git@github.com/VoltaApp/aws-timestream-module.git@<branch_name>```
+```pip install git+https://git@github.com/VoltaApp/aws-timestream-module.git@<branch_name>```
 
 ## Example usages
 
